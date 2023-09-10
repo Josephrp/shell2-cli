@@ -20,7 +20,7 @@ pip install -U shell2-cli
 Setup your shell2 API key by running the command from the terminal
 
 
-```console
+```sh
 shell2 --key "YOUR_SHELL2_API_KEY"
 ```
 
@@ -35,9 +35,11 @@ That's all.
 
 The CLI can be used in 2 ways
 
-* Interactive CLI, which is the easiest way, and most comprehensive - simply run the following in your terminal and follow along
+* Interactive CLI, which is the easiest way, and most comprehensive
+  
+  simply run the following in your terminal (from the folder in which generated data and files will be downloaded) and follow along
 
-    ```console
+    ```sh
     shell2
     ```
 
@@ -49,7 +51,7 @@ The CLI can be used in 2 ways
 
 Navigate to the folder in which you would like to start - where data and files generated in the `shell2` sandbox will be downloaded in real time - and run the following in your terminal
 
-```console
+```sh
 shell2 --session
 ```
 
@@ -61,7 +63,7 @@ You can add the following options
 * `--nosync` : By default, the files in your current folder will be uploaded to the session you are trying to create or join (< if 500 Mb total). Use this option to disable it.
 
 *example*
-```console
+```sh
 shell2 --session --timeout 500 --multiplayer
 ```
 
@@ -71,7 +73,7 @@ Users that create multiplayer sessions *(or enable it)* receive a shareable URL.
 
 You can use that url to join a multiplayer session from your terminal, like this
 
-```console
+```sh
 shell2 --session --url "https://shell2.raiden.ai/view/session/example@raiden.ai/945c846a-5e25-455f-09ba-7e39a5f20d11"
 ```
 
@@ -94,7 +96,7 @@ To run a sequence:
   *All the shell2 commands ( described in [shell2.raiden.ai](https://shell2.raiden.ai) docs, and better explained in the webapp sessions ), such as `/doc` , `/web` , `/run` , `/shell` , etc... are available here.*
   
 * Run this from your terminal (from the same folder)
-  ```console
+  ```sh
   shell2 --sequence
   ```
 * *optional* - you can add these options to the command:
@@ -112,7 +114,7 @@ Any generated files will be created in your current folder.
 ##### Basic Example
 A simple example of `sequence.txt` which would generate a png file in your current folder :
 
-```console
+```sh
 /doc https://raw.githubusercontent.com/raidendotai/shell2-example-data/main/mlb_2012.csv
 
 plot teams payrolls vs winnings in a png file
@@ -124,14 +126,14 @@ Since files in your current folder are automatically uploaded to the sandbox *(i
 
 * example of `sequence.txt`, in the same folder as `group_photo.jpg`:
 
-    * ```console
+    * ```sh
         extract faces from group_photo.jpg, save each face in file under subfolder called extracted_faces
         ```
     * *would generate the extracted_faces/... images directly in your local folder* 
 
 * example of `sequence.txt`, in the same folder as `my_paper.pdf` and `friend_paper.pdf`:
 
-    * ```console
+    * ```sh
         /doc my_paper.pdf extract the findings of this paper
         
         /doc friend_paper.pdf extract research findings from this document
@@ -142,7 +144,7 @@ Since files in your current folder are automatically uploaded to the sandbox *(i
 
 * example of `sequence.txt`, in the same folder as `my_audio.mp3`:
 
-    * ```console
+    * ```sh
         extract the first 10 seconds of my_audio.mp3 and save it in m4a format
         ```
     * *would generate a new m4a in your local folder*
