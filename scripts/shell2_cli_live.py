@@ -243,7 +243,7 @@ async def stack_listener(firestorePath):
                                     
                                     download_thread = threading.Thread(target=download_file, args=(out_path, newfile['url'] ))
                                     download_thread.start()
-                                    download_thread.join()
+                                    # download_thread.join()
                                                     
                 
                 else:
