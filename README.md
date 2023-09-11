@@ -8,7 +8,7 @@ It allows you to create live sessions, including multiplayer with other users, a
 
 It also allows you to sync your local files directly with the shell2 sandbox, and receive any created file in real time.
 
-In addition to voice input for sessions (experimental)
+In addiction to voice input for sessions (experimental)
 
 ---
 
@@ -22,6 +22,8 @@ pip install -U shell2-cli
 * *if you  get `ERROR: Could not build wheels for PyAudio, which is required to install pyproject.toml-based projects`, make sure you install pyaudio dependencies first*:
     * on linux, `apt install python3-pyaudio`
     * on OS X, `brew install portaudio`
+    
+* *if you do not want to use the voice input feature, or if there are audio configuration errors, install a previous version of the cli without voice input* - `pip install shell2-cli==0.105`
 
 2. Setup your shell2 API key by running the command from the terminal
 
