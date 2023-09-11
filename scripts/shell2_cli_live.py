@@ -253,14 +253,14 @@ def sync_current_dir():
         })
     except Exception as e:
         msg_obj = {
-            'trial' : 'upload features are only enabled for subscribed shell2 users. upgrade your account for the full shell2 experience !'
+            'upload_limits' : 'unable to upload. if you are a trial user, uploads storage is limited.'
         }
         console.print( f'[red]{json.dumps(  msg_obj , indent=1 )}[/red]' )
         os.remove(FOLDER_STATE_7Z)
         return
     if not response['status']:
         msg_obj = {
-            'trial' : 'upload features are only enabled for subscribed shell2 users. upgrade your account for the full shell2 experience !'
+            'upload_limits' : 'unable to upload. if you are a trial user, uploads storage is limited.'
         }    
         console.print( f'[red]{json.dumps(  msg_obj , indent=1 )}[/red]' )
         os.remove(FOLDER_STATE_7Z)

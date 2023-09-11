@@ -5,7 +5,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='shell2-cli',
-    version='0.1063',
+    version='0.1064',
     packages=find_packages(),
     install_requires=[
         'shell2',

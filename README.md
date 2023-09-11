@@ -118,10 +118,8 @@ The terminal will display updates in real time until the sequence closes.
 
 Any generated files will be created in your current folder.
 
-##### Sequence Examples
+##### Basic Sequence Example
 
-
-##### Basic Example
 A simple example of `sequence.txt` which would generate a png file in your current folder :
 
 ```sh
@@ -129,6 +127,10 @@ A simple example of `sequence.txt` which would generate a png file in your curre
 
 plot teams payrolls vs winnings in a png file
 ```
+
+---
+
+#### Sequences Examples
 
 ##### Files sync + sequences = Magic
 
