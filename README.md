@@ -2,22 +2,28 @@
 
 The `shell2` platform provides AI-powered, unrestricted code + data sandboxes with high CPU & RAM, with minimal configuration. A mix between Code Interpreter & Replit
 
-`shell2-cli` is the official CLI for the [shell2.raiden.ai](https://shell2.raiden.ai) platform
+`shell2-cli` is the official CLI for the [shell2.raiden.ai](https://shell2.raiden.ai) platform - works across **Linux, OS X, Windows**
 
 It allows you to create live sessions, including multiplayer with other users, and run sequences, directly from your terminal.
 
 It also allows you to sync your local files directly with the shell2 sandbox, and receive any created file in real time.
 
+In addiction to voice input for sessions (experimental)
+
 ---
 
 ## Installation
 
-Install the CLI as follows
+1. Install the CLI as follows
 ```
 pip install -U shell2-cli
 ```
 
-Setup your shell2 API key by running the command from the terminal
+* *if you  get `ERROR: Could not build wheels for PyAudio, which is required to install pyproject.toml-based projects`, make sure you install pyaudio dependencies first*:
+    * on linux, `apt install python3-pyaudio`
+    * on OS X, `brew install portaudio`
+
+2. Setup your shell2 API key by running the command from the terminal
 
 
 ```sh
@@ -35,15 +41,15 @@ That's all.
 
 The CLI can be used in 2 ways
 
-* Interactive CLI, which is the easiest way, and most comprehensive
+* 1 . Interactive CLI, which is the easiest way, and most comprehensive
   
-  simply run the following in your terminal (from the folder in which generated data and files will be downloaded) and follow along
+  Simply run the following in your terminal (from the folder in which generated data and files will be downloaded) and follow along
 
     ```sh
     shell2
     ```
 
-* Using quick methods described below
+* 2 . Using one-line commands described below
 
 ---
 
