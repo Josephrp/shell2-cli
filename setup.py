@@ -5,7 +5,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='shell2-cli',
-    version='0.105',
+    version='0.106',
     packages=find_packages(),
     install_requires=[
         'shell2',
@@ -19,7 +19,11 @@ setup(
         'requests',
         'retry',
         'python-slugify',
-        'py7zr'
+        'py7zr',
+        'openai',
+        'rhasspy-silence',
+        'webrtcvad',
+        'pyaudio'
     ],
     entry_points={
         'console_scripts': [

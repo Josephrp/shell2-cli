@@ -41,6 +41,7 @@ def main():
         help='link to a shared multiplayer session (example : `https://shell2.raiden.ai/view/session/user@email.com/exampleid-123456` )'
     )
     parser.add_argument('--user', type=str)
+    parser.add_argument('--voice', action='store_true', help='use voice commands as message input for sessions')
     
     #sequence stuff
     parser.add_argument('--sequence', action='store_true', help='run a sequence predefined in sequence.txt in current folder')
@@ -109,6 +110,7 @@ def main():
                 cmd_live = f'shell2_cli_live --sandbox session --action new --timeout {timeout}'
                 cmd_live += ' --multiplayer' if args.multiplayer else ''
                 cmd_live += ' --nosync' if args.nosync else ''
+                cmd_live += ' --voice' if args.voice else ''
                 
                 os.system(cmd_live)
            
@@ -116,26 +118,31 @@ def main():
                 # shell2 --session --url {url}
                 cmd_live = f'shell2_cli_live --sandbox session --action join --link {args.url}'
                 cmd_live += ' --nosync' if args.nosync else ''
+                cmd_live += ' --voice' if args.voice else ''
                 os.system(cmd_live)     
             else:
                 if args.new:
                     multiplayer_mode = ' --multiplayer' if args.multiplayer else ''
                     cmd_live = f'shell2_cli_live --sandbox session --action new --timeout {timeout}{multiplayer_mode}'
                     cmd_live += ' --nosync' if args.nosync else ''
+                    cmd_live += ' --voice' if args.voice else ''
                     os.system(cmd_live)
                 elif args.resume:
                     multiplayer_mode = ' --multiplayer' if args.multiplayer else ''
                     cmd_live = f'shell2_cli_live --sandbox session --action resume --sessionId "{args.sessionId}" --timeout {timeout}{multiplayer_mode}'
                     cmd_live += ' --nosync' if args.nosync else ''
+                    cmd_live += ' --voice' if args.voice else ''
                     os.system(cmd_live)
                 elif args.join:
                     if args.url:
                         cmd_live = f'shell2_cli_live --sandbox session --action join --link "{args.url}"'
                         cmd_live += ' --nosync' if args.nosync else ''
+                        cmd_live += ' --voice' if args.voice else ''
                         os.system(cmd_live)
                     elif args.user and args.sessionId:
                         cmd_live = f'shell2_cli_live --sandbox session --action join --sessionId "{args.sessionId}" --user "{args.user}"'
                         cmd_live += ' --nosync' if args.nosync else ''
+                        cmd_live += ' --voice' if args.voice else ''
                         os.system(cmd_live)
                     
                     

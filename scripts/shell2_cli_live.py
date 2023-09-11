@@ -27,6 +27,124 @@ config.read(CONFIG_FILE)
 def get_api_key():
     return config['DEFAULT'].get('apikey', None)
 
+
+
+
+################################################
+# VOCAL COMMAND STUFF
+# https://stackoverflow.com/questions/46734345/python-record-on-loop-stop-recording-when-silent
+
+from rhasspysilence import WebRtcVadRecorder,VoiceCommand, VoiceCommandResult
+import dataclasses
+import typing
+from queue import Queue
+import io
+from pathlib import Path
+import shlex
+import wave
+import subprocess
+import pyaudio
+
+import openai
+
+pa =pyaudio.PyAudio()
+#you can change the options (these are default settings)
+vad_mode = 3
+sample_rate = 16000
+min_seconds= 0.3
+max_seconds = 60
+speech_seconds = 0.5 #0.3
+silence_seconds = 3 #0.5
+before_seconds = 0.5
+chunk_size= 960
+skip_seconds = 0
+audio_source = None
+channels =1
+def SpeechToText():
+    recorder = WebRtcVadRecorder(
+        vad_mode=vad_mode,
+        min_seconds=min_seconds,
+        max_seconds=max_seconds,
+        speech_seconds=speech_seconds,
+        silence_seconds=silence_seconds
+    )
+    recorder.start()
+    # file directory
+    wav_sink = './'
+    wav_dir = None
+    # file name
+    wav_filename = '_temp_vocal_recording'
+    if wav_sink:
+        wav_sink_path = Path(wav_sink)
+        if wav_sink_path.is_dir():
+            # Directory to write WAV files
+            wav_dir = wav_sink_path
+        else:
+            # Single WAV file to write
+            wav_sink = open(wav_sink, "wb")
+    voice_command: typing.Optional[VoiceCommand] = None
+    audio_source = pa.open(rate=sample_rate,format=pyaudio.paInt16,channels=channels,input=True,frames_per_buffer=chunk_size)
+    audio_source.start_stream()
+    # print("Ready", file=sys.stderr)
+    def buffer_to_wav(buffer: bytes) -> bytes:
+        """Wraps a buffer of raw audio data in a WAV"""
+        rate = int(sample_rate)
+        width = int(2)
+        channels = int(1)
+ 
+        with io.BytesIO() as wav_buffer:
+            wav_file: wave.Wave_write = wave.open(wav_buffer, mode="wb")
+            with wav_file:
+                wav_file.setframerate(rate)
+                wav_file.setsampwidth(width)
+                wav_file.setnchannels(channels)
+                wav_file.writeframesraw(buffer)
+ 
+            return wav_buffer.getvalue()
+    try:
+        chunk = audio_source.read(chunk_size)
+        while chunk:
+ 
+            # Look for speech/silence
+            voice_command = recorder.process_chunk(chunk)
+ 
+            if voice_command:
+                is_timeout = voice_command.result == VoiceCommandResult.FAILURE
+                # Reset
+                audio_data = recorder.stop()
+                if wav_dir:
+                    # Write WAV to directory
+                    wav_path = (wav_dir / time.strftime(wav_filename)).with_suffix(
+                        ".wav"
+                    )
+                    wav_bytes = buffer_to_wav(audio_data)
+                    wav_path.write_bytes(wav_bytes)
+                    #print(wav_path)
+                    #print('file saved')
+                    break
+                elif wav_sink:
+                    # Write to WAV file
+                    wav_bytes = core.buffer_to_wav(audio_data)
+                    wav_sink.write(wav_bytes)
+            # Next audio chunk
+            chunk = audio_source.read(chunk_size)
+ 
+    finally:
+        try:
+            audio_source.close_stream()
+        except Exception:
+            pass
+
+
+
+
+################################################
+
+
+
+
+
+
 firestoreClient = None
 
 loop = asyncio.get_event_loop()
@@ -44,9 +162,26 @@ SESSION_USER = False
 SANDBOX_TYPE = False
 FOLDER_STATE_7Z = False
 FOLDER_STATE_NOSYNC = False
+USER_INPUT_MODE = 'text'
 
 STACK_TRACK = {}
 FILES_TRACK = {}
+
+
+
+def _vocal_input():
+    SpeechToText()
+    
+    loop.call_soon_threadsafe(console.print, (f"[red]transcribing audio[/red]")  )
+    whisper_response = openai.Audio.transcribe("whisper-1", open( '_temp_vocal_recording.wav' , "rb") )
+    transcript = whisper_response['text']
+    os.remove( '_temp_vocal_recording.wav' )
+    transcript_alpha_only = ''.join(filter(str.isalpha, transcript.lower().strip() ))
+    if transcript_alpha_only == 'thankyou':
+        return '/done'
+    if transcript.lower().strip().startswith('yo') :
+        return f'/m { " ".join( transcript.split(" ")[1:] ) }'        
+    return transcript
 
 
 def _save_json(path,obj):
@@ -368,14 +503,26 @@ async def session_metadata_listener(firestorePath):
 
 def user_input():
     global SESSION_BUSY
+    global SESSION_DONE
     global SESSION_ID
     global SESSION_USER
     global SHELL2_CLIENT
     global API_KEY
+    global USER_INPUT_MODE
+    
     while True:
-        if not SESSION_BUSY:
+        if (not SESSION_BUSY) and (not SESSION_DONE):
             time.sleep(0.75)
-            user_message = prompt("user > ", style=Style.from_dict({"prompt": "yellow"}))
+            
+            if USER_INPUT_MODE == 'text':
+                user_message = prompt("user > ", style=Style.from_dict({"prompt": "yellow"}))
+            elif USER_INPUT_MODE == 'voice':
+                loop.call_soon_threadsafe(
+                    console.print,
+                    ( f"[yellow]\nlistening for vocal input ____________________________\n\t- for text prompts (no code gen), start by saying `yo`\n\t- if you're done, say `thank you` to close session\nspeak >[/yellow]" )
+                )
+                user_message = _vocal_input()
+
             if len(user_message):
                 SHELL2_CLIENT.session.message({
                     'sessionId' : SESSION_ID,
@@ -383,7 +530,6 @@ def user_input():
                     'user':SESSION_USER
                 })
                 SESSION_BUSY = True
-
 
 def session_new(timeout,multiplayer):
     global firestoreClient
@@ -711,6 +857,7 @@ def sequence_run(timeout,sequence,webhook):
 
 def main():
     global FOLDER_STATE_NOSYNC
+    global USER_INPUT_MODE
     
     # is called from main cli, ~like this
     
@@ -739,9 +886,59 @@ def main():
     
     parser.add_argument('--nosync', action='store_true', required=False)
     
+    parser.add_argument('--voice', action='store_true', required=False)
+    
     args = parser.parse_args()
     
     FOLDER_STATE_NOSYNC = args.nosync
+    
+    current_settings = SHELL2_CLIENT.settings.get()
+    current_keystore = current_settings['settings']['keystore']
+    current_llm = current_settings['settings']['llm']
+    if current_llm.startswith('openai/') and current_keystore['openai'].startswith('sk-OPEN'):
+        console_msg = {
+            'llm' : current_llm,
+            'missing_api_key' : 'openai',
+            'error' : f"your selected LLM is `{current_llm}`, but you haven't setup an OpenAI key. set it up in your shell2 settings.",
+        }
+        console.print( f'[red]{json.dumps(  console_msg , indent=1 )}[/red]' )
+        exit(0)
+    if current_llm.startswith('replicate/') and current_keystore['replicate'].startswith('r8_REPL'):
+        console_msg = {
+            'llm' : current_llm,
+            'missing_api_key' : 'replicate',
+            'error' : f"your selected LLM is `{current_llm}`, but you haven't setup a Replicate key. set it up in your shell2 settings.",
+        }
+        console.print( f'[red]{json.dumps(  console_msg , indent=1 )}[/red]' )
+        exit(0)
+        
+        
+    if args.voice :
+        
+        console_msg = {
+            'input_mode' : 'voice',
+            'message' : 'voice input requires whisper by OpenAI. checking your keystore.'
+        }
+        
+        console.print( f'[yellow]{json.dumps(  console_msg , indent=1 )}[/yellow]' )        
+        
+        
+        
+
+        if current_keystore['openai'].startswith( 'sk-OPEN' ) :
+            console_msg = {
+                'error' : 'no API key found for OpenAI. go to your shell2 settings to set it',
+                'input_mode' : 'input mode now set to text'
+            }
+            console.print( f'[red]{json.dumps(  console_msg , indent=1 )}[/red]' )
+            USER_INPUT_MODE = 'text'
+        else:
+            USER_INPUT_MODE = 'voice'
+            openai.api_key = current_keystore['openai']
+            console_msg = {
+                'input_mode' : 'voice input enabled'
+            }
+            console.print( f'[red]{json.dumps(  console_msg , indent=1 )}[/red]' )
     
     if args.sandbox == 'session':
         if args.action == 'new':

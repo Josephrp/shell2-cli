@@ -59,6 +59,7 @@ The terminal will enter live mode and you'll be able to interact with the sandbo
 
 You can add the following options
 * `--timeout TIMEOUT_IN_SECONDS` : Max timeout for your session (defaults to 600 seconds)
+* `--voice` : Use voice input to send messages (experimental)
 * `--multiplayer` : Enable multiplayer in your created session. You will be provided with a shareable url for the multiplayer session.
 * `--nosync` : By default, the files in your current folder will be uploaded to the session you are trying to create or join (< if 500 Mb total). Use this option to disable it.
 
@@ -80,6 +81,7 @@ shell2 --session --url "https://shell2.raiden.ai/view/session/example@raiden.ai/
 The terminal will enter live mode and you'll be able to interact with the sandbox in real time.
 
 You can add the following options when joining a session
+* `--voice` : Use voice input to send messages (experimental)
 * `--nosync` : By default, the files in your current folder will be uploaded to the session you are trying to create or join (< if 500 Mb total). Use this option to disable it.
 
 

@@ -46,22 +46,28 @@ def selector_sessions():
         timeout = input('timeout in seconds (default 600) > ')
         multiplayer = input('enable multiplayer (y/n) > ')
         nosync_files = input('upload files in current folder to session ? (max total 500Mb) (y/n) > ')
+        voice = input('use voice as message input (experimental) (y/n) > ')
+        
         try:
             timeout = int(timeout)
         except Exception as e:
             timeout = 600
         multiplayer = True if ( multiplayer == 'Y' or multiplayer == 'y' ) else False
         nosync_files = False if ( nosync_files == 'Y' or nosync_files == 'y' ) else True
+        
+        voice = True if ( voice == 'Y' or voice == 'y' ) else False
 
         cpprint({
             'timeout' : timeout,
             'multiplayer' : multiplayer,
             'nosync_files' : nosync_files,
+            'voice' : voice,
         })
         
         cmd_live = f'shell2_cli_live --sandbox session --action new --timeout {timeout}'
         cmd_live += ' --multiplayer' if multiplayer else ''
         cmd_live += ' --nosync' if nosync_files else ''
+        cmd_live += ' --voice' if voice else ''
         os.system(cmd_live)
 
     def fn_sessionResume():
@@ -87,26 +93,32 @@ def selector_sessions():
             selected_sessionId = choice_sessionId['sessionId'].split(' | ')[0].strip()
 
             timeout = 600
+            
             timeout = input('timeout in seconds (default 600) > ')
             multiplayer = input('enable multiplayer (y/n) > ')
             nosync_files = input('upload files in current folder to session ? (max total 500Mb) (y/n) > ')
+            voice = input('use voice as message input (experimental) (y/n) > ')
+            
             try:
                 timeout = int(timeout)
             except Exception as e:
                 timeout = 600
             multiplayer = True if ( multiplayer == 'Y' or multiplayer == 'y' ) else False
             nosync_files = False if ( nosync_files == 'Y' or nosync_files == 'y' ) else True
+            voice = True if ( voice == 'Y' or voice == 'y' ) else False
 
             cpprint({
                 'sessionId' : selected_sessionId,
                 'timeout' : timeout,
                 'multiplayer' : multiplayer,
                 'nosync_files' : nosync_files,
+                'voice' : voice,
             })
             
             cmd_live = f'shell2_cli_live --sandbox session --action resume --sessionId {selected_sessionId} --timeout {timeout}'
             cmd_live += ' --multiplayer' if multiplayer else ''
             cmd_live += ' --nosync' if nosync_files else ''
+            cmd_live += ' --voice' if voice else ''
             os.system(cmd_live)
         
         
@@ -170,14 +182,18 @@ def selector_sessions():
 
             nosync_files = input('upload files in current folder to join session ? (max total 500Mb) (y/n) > ')
             nosync_files = False if ( nosync_files == 'Y' or nosync_files == 'y' ) else True
+            voice = input('use voice as message input (experimental) (y/n) > ')
+            voice = True if ( voice == 'Y' or voice == 'y' ) else False
 
             cpprint({
                 'sessionId' : selected_sessionId,
                 'nosync_files' : nosync_files,
+                'voice': voice,
             })
 
             cmd_live = f'shell2_cli_live --sandbox session --action join --sessionId {selected_sessionId}'
             cmd_live += ' --nosync' if nosync_files else ''
+            cmd_live += ' --voice' if voice else ''
             os.system(cmd_live)
         else:
             selector_sessions()
@@ -207,14 +223,19 @@ def selector_sessions():
             multiplayer_url = input('paste multiplayer url > ')
             nosync_files = input('upload files in current folder to session ? (max total 500Mb) (y/n) > ')
             nosync_files = False if ( nosync_files == 'Y' or nosync_files == 'y' ) else True
+            voice = input('use voice as message input (experimental) (y/n) > ')
+            voice = True if ( voice == 'Y' or voice == 'y' ) else False
+
 
             cpprint({
                 'multiplayer_url' : multiplayer_url,
                 'nosync_files' : nosync_files,
+                'voice' : voice,
             })
 
             cmd_live = f'shell2_cli_live --sandbox session --action join --link {multiplayer_url.strip()}'
             cmd_live += ' --nosync' if nosync_files else ''
+            voice += ' --nosync' if voice else ''
             os.system(cmd_live)
             
         elif chosen_method == 'i have a session owner email and sessionId':
@@ -224,14 +245,19 @@ def selector_sessions():
             nosync_files = input('upload files in current folder to session ? (max total 500Mb) (y/n) > ')
             nosync_files = False if ( nosync_files == 'Y' or nosync_files == 'y' ) else True
 
+            voice = input('use voice as message input (experimental) (y/n) > ')
+            voice = True if ( voice == 'Y' or voice == 'y' ) else False
+
             cpprint({
                 'session_owner' : session_owner,
                 'sessionId' : sessionId,
                 'nosync_files' : nosync_files,
+                'voice' : voice,
             })
 
             cmd_live = f'shell2_cli_live --sandbox session --action join --user {session_owner.strip()} --sessionId {sessionId.strip()}'
             cmd_live += ' --nosync' if nosync_files else ''
+            cmd_live += ' --voice' if voice else ''
             os.system(cmd_live)
         
         elif chosen_method == 'back to menu':
