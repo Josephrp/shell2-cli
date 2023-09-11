@@ -8,7 +8,7 @@ It allows you to create live sessions, including multiplayer with other users, a
 
 It also allows you to sync your local files directly with the shell2 sandbox, and receive any created file in real time.
 
-In addiction to voice input for sessions (experimental)
+In addition to voice input for sessions (experimental)
 
 ---
 
