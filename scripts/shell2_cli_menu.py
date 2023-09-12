@@ -235,7 +235,7 @@ def selector_sessions():
 
             cmd_live = f'shell2_cli_live --sandbox session --action join --link {multiplayer_url.strip()}'
             cmd_live += ' --nosync' if nosync_files else ''
-            voice += ' --nosync' if voice else ''
+            cmd_live += ' --voice' if voice else ''
             os.system(cmd_live)
             
         elif chosen_method == 'i have a session owner email and sessionId':

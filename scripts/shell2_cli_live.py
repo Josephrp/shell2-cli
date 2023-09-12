@@ -739,7 +739,7 @@ def session_join(sessionId,user):
     
     sdkStreamData = _postWithRetry(
         'https://api.shell2.raiden.ai/user/sdk/stream' ,
-        {'sessionId' : SESSION_ID},
+        {'sessionId' : SESSION_ID , 'user' : SESSION_USER },
         {'key':API_KEY}
     )
     
@@ -751,6 +751,8 @@ def session_join(sessionId,user):
     sdkStreamData['stack'] = f'userdata/{SESSION_USER}/automation_layer/shell2/session/{SESSION_ID}/stack'
     sdkStreamData['messages'] = f'userdata/{SESSION_USER}/automation_layer/shell2/session/{SESSION_ID}/message'
     
+    
+    # print(sdkStreamData)
     
     firestoreClient = firestore.Client(
         project = sdkStreamData['config']['projectId'],
